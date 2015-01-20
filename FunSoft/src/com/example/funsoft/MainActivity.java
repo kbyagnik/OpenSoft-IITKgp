@@ -13,12 +13,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements OnClickListener {
@@ -26,7 +28,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	Button download;
 	TextView status;
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
-//	private ProgressDialog mProgressDialog;
+	
+	private ProgressBar mProgress;
+    private int mProgressStatus = 0;
+
+    private Handler mHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +40,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 		download = (Button) findViewById(R.id.download_btn);
 		status = (TextView) findViewById(R.id.status);
+		mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
 	}
 
@@ -64,6 +71,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		switch (id) {
 		case R.id.download_btn:
 			status.setText("Button Clicked!");
+	//		mProgress.setProgress(50);
 			startDownload();
 			break;
 		}
@@ -113,6 +121,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 				while ((count = input.read(data)) != -1) {
 					total += count;
+					mProgressStatus=(int) ((total * 100) / lenghtOfFile);
+					mProgress.setProgress(mProgressStatus);
 					//publishProgress("" + (int) ((total * 100) / lenghtOfFile));
 					output.write(data, 0, count);
 				}

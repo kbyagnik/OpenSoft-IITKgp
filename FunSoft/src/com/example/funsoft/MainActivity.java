@@ -4,13 +4,23 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.TextView;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements OnClickListener {
+	
+	Button download;
+	TextView status;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		download = (Button) findViewById(R.id.download_btn);
+		status = (TextView) findViewById(R.id.status);
+		download.setOnClickListener(this);
 	}
 
 	@Override
@@ -30,5 +40,16 @@ public class MainActivity extends ActionBarActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		int id = v.getId();
+		switch (id) {
+		case R.id.download_btn:
+			status.setText("Button Clicked!");
+			break;
+		}
 	}
 }

@@ -1,7 +1,19 @@
 package com.example.funsoft;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
+
 import android.support.v7.app.ActionBarActivity;
+//import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,9 +22,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements OnClickListener {
-	
+
 	Button download;
 	TextView status;
+	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
+//	private ProgressDialog mProgressDialog;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +44,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		return true;
 	}
 
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -41,7 +56,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
@@ -49,7 +64,73 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		switch (id) {
 		case R.id.download_btn:
 			status.setText("Button Clicked!");
+			startDownload();
 			break;
 		}
 	}
+
+	private void startDownload() {
+		// TODO Auto-generated method stub
+		String url = "http://cse.iitrpr.ac.in/ckn/courses/s2015/q1.pdf"; // your
+																			// download
+																			// url
+		new DownloadFileAsync().execute(url);
+	}
+
+	class DownloadFileAsync extends AsyncTask<String, String, String> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+		//	showDialog(DIALOG_DOWNLOAD_PROGRESS);
+		}
+
+		@Override
+		protected String doInBackground(String... aurl) {
+			int count;
+
+			try {
+
+				URL url = new URL(aurl[0]);
+				URLConnection conexion = url.openConnection();
+				conexion.connect();
+
+				int lenghtOfFile = conexion.getContentLength();
+				Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
+
+				File SDCardRoot = Environment.getExternalStorageDirectory();
+				// create a new file, to save the downloaded file
+				File file = new File(SDCardRoot, "downloaded_file.pdf");
+
+				InputStream input = new BufferedInputStream(url.openStream());
+				OutputStream output = new FileOutputStream(file); // save file
+																	// in SD
+																	// Card
+
+				byte data[] = new byte[1024];
+
+				long total = 0;
+
+				while ((count = input.read(data)) != -1) {
+					total += count;
+					//publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+					output.write(data, 0, count);
+				}
+
+				output.flush();
+				output.close();
+				input.close();
+			} catch (Exception e) {
+			}
+			return null;
+
+		}
+
+
+		@Override
+		protected void onPostExecute(String unused) {
+	//		dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+		}
+	}
+
 }

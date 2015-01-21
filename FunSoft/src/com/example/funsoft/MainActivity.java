@@ -53,7 +53,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
-	String query = "http://10.20.87.91/check.php";
+	String query = "http://10.20.254.55/opensoft/server.php";
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
 
@@ -69,7 +69,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		download = (Button) findViewById(R.id.download_btn);
 		search = (EditText) findViewById(R.id.searchBox);
 		results = (ListView) findViewById(R.id.listView_results);
-		resultAdapter = new ArrayAdapter<String>(getApplicationContext(),
+		resultAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, resultList);
 		results.setAdapter(resultAdapter);
 		// status = (TextView) findViewById(R.id.status);
@@ -138,7 +138,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 							responseHandler);
 
 					System.out.println(response);
-					displayResults(response);
+					runOnUiThread(new Runnable() {
+						public void run() {
+							displayResults(response);
+						}
+					});
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -221,7 +225,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		try {
 			JSONArray j = new JSONArray(response);
 			for (int i = 0; i < j.length(); ++i) {
-				resultList.add(j.getJSONObject(i).getString("result"));
+				resultList.add("Title: "+j.getJSONObject(i).getString("title")+"\nDescription: "+j.getJSONObject(i).getString("description"));
 			}
 			resultAdapter.notifyDataSetChanged();
 		} catch (JSONException e) {

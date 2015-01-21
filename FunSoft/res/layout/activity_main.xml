@@ -23,10 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchBox"
         android:layout_centerHorizontal="true"
-        android:text="Button" />
+        android:text="Search" />
 
     <EditText
         android:id="@+id/searchBox"
+        android:hint="Enter search keyword"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/listView_results"

@@ -48,7 +48,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	// TextView status;
 	EditText search;
 	ListView results;
-	ArrayList<String> resultList;
+	ArrayList<String> resultList = new ArrayList<String>();
 	ArrayAdapter<String> resultAdapter;
 	
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
@@ -206,6 +206,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	}
 
 	void displayResults(String response){
+		resultList.clear();
 		try {
 			JSONArray j = new JSONArray(response);
 			for(int i=0;i<j.length();++i){

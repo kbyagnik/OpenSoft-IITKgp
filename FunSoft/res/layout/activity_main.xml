@@ -12,27 +12,21 @@
         android:id="@+id/download_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView1"
+        android:layout_below="@+id/searchBox"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
-        android:text="Download" />
+        android:layout_marginTop="18dp"
+        android:text="Button" />
 
-    <TextView
-        android:id="@+id/status"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/searchBox"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button1"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="14dp"
-        android:text="@string/hello_world" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="23dp"
+        android:ems="10" >
 
-    <ProgressBar
-        android:id="@+id/downloadBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/download_btn"
-        android:layout_marginTop="123dp"
-        android:layout_toLeftOf="@+id/download_btn" />
+        <requestFocus />
+    </EditText>
 
 </RelativeLayout>

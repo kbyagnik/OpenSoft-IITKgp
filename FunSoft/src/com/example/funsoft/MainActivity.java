@@ -20,27 +20,30 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	Button download;
-	TextView status;
+//	TextView status;
+	EditText search;
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 	
-	private ProgressBar mProgress;
-    private int mProgressStatus = 0;
+//	private ProgressBar mProgress;
+//  private int mProgressStatus = 0;
 
-    private Handler mHandler = new Handler();
+//    private Handler mHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		download = (Button) findViewById(R.id.download_btn);
-		status = (TextView) findViewById(R.id.status);
-		mProgress = (ProgressBar) findViewById(R.id.downloadBar);
+		search = (EditText) findViewById(R.id.searchBox);
+//		status = (TextView) findViewById(R.id.status);
+//		mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
 	}
 
@@ -70,9 +73,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		int id = v.getId();
 		switch (id) {
 		case R.id.download_btn:
-			status.setText("Button Clicked!");
+			
+//			status.setText("Button Clicked!");
 	//		mProgress.setProgress(50);
-			startDownload();
+		//	startDownload();
 			break;
 		}
 	}
@@ -121,8 +125,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 				while ((count = input.read(data)) != -1) {
 					total += count;
-					mProgressStatus=(int) ((total * 100) / lenghtOfFile);
-					mProgress.setProgress(mProgressStatus);
+//					mProgressStatus=(int) ((total * 100) / lenghtOfFile);
+	//				mProgress.setProgress(mProgressStatus);
 					//publishProgress("" + (int) ((total * 100) / lenghtOfFile));
 					output.write(data, 0, count);
 				}

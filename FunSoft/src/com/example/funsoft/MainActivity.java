@@ -48,12 +48,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	// TextView status;
 	EditText search;
 	ListView results;
-	ArrayList<String> resultList;
+	ArrayList<String> resultList = new ArrayList<String>();
 	ArrayAdapter<String> resultAdapter;
-	
+
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
-	String query = "http://10.20.254.55/";
+	String query = "http://10.20.87.91/check.php";
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
 
@@ -69,10 +69,11 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		download = (Button) findViewById(R.id.download_btn);
 		search = (EditText) findViewById(R.id.searchBox);
 		results = (ListView) findViewById(R.id.listView_results);
-		resultAdapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,resultList);
+		resultAdapter = new ArrayAdapter<String>(getApplicationContext(),
+				android.R.layout.simple_list_item_1, resultList);
 		results.setAdapter(resultAdapter);
-//		status = (TextView) findViewById(R.id.status);
-//		mProgress = (ProgressBar) findViewById(R.id.downloadBar);
+		// status = (TextView) findViewById(R.id.status);
+		// mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
 	}
 
@@ -109,35 +110,45 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 
-	private void searchData(String search) {
+	private void searchData(final String search) {
+
 		// TODO Auto-generated method stub
-		try {
-			System.out.println("asdsad");
-			HttpClient httpclient = new DefaultHttpClient();
-			HttpPost httppost = new HttpPost(query);
+		System.out.println("asdsa78d");
+		Thread thread = new Thread() {
 
-			nameValuePairs = new ArrayList<NameValuePair>();
-			nameValuePairs.add(new BasicNameValuePair("command", "search"));
-			nameValuePairs.add(new BasicNameValuePair("query", search));
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-			System.out.println("asdsad");
-			System.out.println(nameValuePairs);
-			response = httpclient.execute(httppost);
-			
-			ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            final String response = httpclient.execute(httppost, responseHandler);
-            
-            
-            
-            
-			displayResults(response);
-            
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			@Override
+			public void run() {
+				try {
+
+					System.out.println("asdsad");
+					HttpClient httpclient = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(query);
+
+					nameValuePairs = new ArrayList<NameValuePair>();
+					nameValuePairs.add(new BasicNameValuePair("command",
+							"search"));
+					nameValuePairs.add(new BasicNameValuePair("query", search));
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					System.out.println("asdsad");
+					System.out.println(nameValuePairs);
+					response = httpclient.execute(httppost);
+					System.out.println(response);
+					ResponseHandler<String> responseHandler = new BasicResponseHandler();
+					final String response = httpclient.execute(httppost,
+							responseHandler);
+
+					System.out.println(response);
+					displayResults(response);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		};
+		thread.start();
 	}
-
 
 	private void startDownload() {
 		// TODO Auto-generated method stub
@@ -205,10 +216,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 
-	void displayResults(String response){
+	void displayResults(String response) {
 		try {
 			JSONArray j = new JSONArray(response);
-			for(int i=0;i<j.length();++i){
+			for (int i = 0; i < j.length(); ++i) {
 				resultList.add(j.getJSONObject(i).getString("result"));
 			}
 			resultAdapter.notifyDataSetChanged();

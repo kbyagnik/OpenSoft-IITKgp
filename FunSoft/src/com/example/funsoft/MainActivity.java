@@ -74,17 +74,18 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		resultAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, resultList);
 		results.setAdapter(resultAdapter);
-		results.setOnItemClickListener(new OnItemClickListener(){
+		results.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> adapter, View arg1, int position,
-					long arg3) {
+			public void onItemClick(AdapterView<?> adapter, View arg1,
+					int position, long arg3) {
 				// TODO Auto-generated method stub
-				String data=(String)adapter.getItemAtPosition(position);
-				data=data.split("Link")[1];
+				String data = (String) adapter.getItemAtPosition(position);
+				data = data.split("Link")[1];
 				System.out.println(data);
 				startDownload(data);
-			}});
+			}
+		});
 		// status = (TextView) findViewById(R.id.status);
 		// mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
@@ -169,9 +170,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private void startDownload(String url) {
 		// TODO Auto-generated method stub
-//		String url = "http://cse.iitrpr.ac.in/ckn/courses/s2015/q1.pdf"; // your
-																			// download
-																			// url
+		// String url = "http://cse.iitrpr.ac.in/ckn/courses/s2015/q1.pdf"; //
+		// your
+		// download
+		// url
 		new DownloadFileAsync().execute(url);
 	}
 
@@ -204,20 +206,19 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				OutputStream output = new FileOutputStream(file); // save file
 																	// in SD
 																	// Card
-
+				int mProgressStatus;
 				byte data[] = new byte[1024];
 
 				long total = 0;
 
 				while ((count = input.read(data)) != -1) {
 					total += count;
-					// mProgressStatus=(int) ((total * 100) / lenghtOfFile);
+					mProgressStatus=(int) ((total * 100) / lenghtOfFile);
 					// mProgress.setProgress(mProgressStatus);
-					// publishProgress("" + (int) ((total * 100) /
-					// lenghtOfFile));
+					System.out.println("Downloading..." + mProgressStatus + "%");
 					output.write(data, 0, count);
 				}
-
+				System.out.println("Downloaded");
 				output.flush();
 				output.close();
 				input.close();
@@ -233,14 +234,16 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 
-	void displayResults(String response){
+	void displayResults(String response) {
 		resultList.clear();
 		try {
 			JSONArray j = new JSONArray(response);
 			for (int i = 0; i < j.length(); ++i) {
-				resultList.add("Title: "+j.getJSONObject(i).getString("title")+
-						"\nDescription: "+j.getJSONObject(i).getString("description")+
-						"\nLink"+j.getJSONObject(i).getString("link"));
+				resultList.add("Title: "
+						+ j.getJSONObject(i).getString("title")
+						+ "\nDescription: "
+						+ j.getJSONObject(i).getString("description")
+						+ "\nLink" + j.getJSONObject(i).getString("link"));
 			}
 			resultAdapter.notifyDataSetChanged();
 		} catch (JSONException e) {

@@ -7,6 +7,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.support.v7.app.ActionBarActivity;
 //import android.app.ProgressDialog;
@@ -19,8 +24,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,6 +36,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	Button download;
 //	TextView status;
 	EditText search;
+	ListView results;
+	ArrayList<String> resultList;
+	ArrayAdapter<String> resultAdapter;
+	
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 	
 //	private ProgressBar mProgress;
@@ -42,6 +53,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 		download = (Button) findViewById(R.id.download_btn);
 		search = (EditText) findViewById(R.id.searchBox);
+		results = (ListView) findViewById(R.id.listView_results);
+		resultAdapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,resultList);
+		results.setAdapter(resultAdapter);
 //		status = (TextView) findViewById(R.id.status);
 //		mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
@@ -147,4 +161,16 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 
+	void displayResults(String response){
+		try {
+			JSONArray j = new JSONArray(response);
+			for(int i=0;i<j.length();++i){
+				resultList.add(j.getJSONObject(i).getString("result"));
+			}
+			resultAdapter.notifyDataSetChanged();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

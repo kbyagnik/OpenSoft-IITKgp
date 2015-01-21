@@ -7,6 +7,15 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.funsoft.MainActivity" >
+    
+    <ListView
+        android:id="@+id/listView_results"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/download_btn"
+        android:layout_weight="2" >
+
+    </ListView>
 
     <Button
         android:id="@+id/download_btn"
@@ -14,16 +23,14 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/searchBox"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
         android:text="Button" />
 
     <EditText
         android:id="@+id/searchBox"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/listView_results"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="23dp"
         android:ems="10" >
 
         <requestFocus />

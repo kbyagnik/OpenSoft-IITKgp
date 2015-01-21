@@ -35,6 +35,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -53,7 +55,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
-	String query = "http://10.20.254.55/opensoft/server.php";
+	String query = "http://10.20.87.91/check.php";
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
 
@@ -72,6 +74,17 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		resultAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, resultList);
 		results.setAdapter(resultAdapter);
+		results.setOnItemClickListener(new OnItemClickListener(){
+
+			@Override
+			public void onItemClick(AdapterView<?> adapter, View arg1, int position,
+					long arg3) {
+				// TODO Auto-generated method stub
+				String data=(String)adapter.getItemAtPosition(position);
+				data=data.split("Link")[1];
+				System.out.println(data);
+				startDownload(data);
+			}});
 		// status = (TextView) findViewById(R.id.status);
 		// mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
@@ -154,9 +167,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		thread.start();
 	}
 
-	private void startDownload() {
+	private void startDownload(String url) {
 		// TODO Auto-generated method stub
-		String url = "http://cse.iitrpr.ac.in/ckn/courses/s2015/q1.pdf"; // your
+//		String url = "http://cse.iitrpr.ac.in/ckn/courses/s2015/q1.pdf"; // your
 																			// download
 																			// url
 		new DownloadFileAsync().execute(url);
@@ -225,7 +238,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		try {
 			JSONArray j = new JSONArray(response);
 			for (int i = 0; i < j.length(); ++i) {
-				resultList.add("Title: "+j.getJSONObject(i).getString("title")+"\nDescription: "+j.getJSONObject(i).getString("description"));
+				resultList.add("Title: "+j.getJSONObject(i).getString("title")+
+						"\nDescription: "+j.getJSONObject(i).getString("description")+
+						"\nLink"+j.getJSONObject(i).getString("link"));
 			}
 			resultAdapter.notifyDataSetChanged();
 		} catch (JSONException e) {

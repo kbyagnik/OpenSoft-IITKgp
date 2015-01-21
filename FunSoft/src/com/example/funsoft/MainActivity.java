@@ -5,8 +5,21 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.support.v7.app.ActionBarActivity;
 //import android.app.ProgressDialog;
@@ -27,14 +40,18 @@ import android.widget.TextView;
 public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	Button download;
-//	TextView status;
+	// TextView status;
 	EditText search;
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
-	
-//	private ProgressBar mProgress;
-//  private int mProgressStatus = 0;
 
-//    private Handler mHandler = new Handler();
+	String query = "http://10.20.254.55/";
+	List<NameValuePair> nameValuePairs;
+	HttpResponse response;
+
+	// private ProgressBar mProgress;
+	// private int mProgressStatus = 0;
+
+	// private Handler mHandler = new Handler();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +59,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 		download = (Button) findViewById(R.id.download_btn);
 		search = (EditText) findViewById(R.id.searchBox);
-//		status = (TextView) findViewById(R.id.status);
-//		mProgress = (ProgressBar) findViewById(R.id.downloadBar);
+		// status = (TextView) findViewById(R.id.status);
+		// mProgress = (ProgressBar) findViewById(R.id.downloadBar);
 		download.setOnClickListener(this);
 	}
 
@@ -54,7 +71,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		return true;
 	}
 
-	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -73,13 +89,43 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		int id = v.getId();
 		switch (id) {
 		case R.id.download_btn:
-			
-//			status.setText("Button Clicked!");
-	//		mProgress.setProgress(50);
-		//	startDownload();
+			searchData(search.getText().toString());
+			// status.setText("Button Clicked!");
+			// mProgress.setProgress(50);
+			// startDownload();
 			break;
 		}
 	}
+
+	private void searchData(String search) {
+		// TODO Auto-generated method stub
+		try {
+			System.out.println("asdsad");
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(query);
+
+			nameValuePairs = new ArrayList<NameValuePair>();
+			nameValuePairs.add(new BasicNameValuePair("command", "search"));
+			nameValuePairs.add(new BasicNameValuePair("query", search));
+			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			System.out.println("asdsad");
+			System.out.println(nameValuePairs);
+			response = httpclient.execute(httppost);
+			
+			ResponseHandler<String> responseHandler = new BasicResponseHandler();
+            final String response = httpclient.execute(httppost, responseHandler);
+            
+            
+            
+            
+			displayResults(response);
+            
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 	private void startDownload() {
 		// TODO Auto-generated method stub
@@ -94,7 +140,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-		//	showDialog(DIALOG_DOWNLOAD_PROGRESS);
+			// showDialog(DIALOG_DOWNLOAD_PROGRESS);
 		}
 
 		@Override
@@ -125,9 +171,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 				while ((count = input.read(data)) != -1) {
 					total += count;
-//					mProgressStatus=(int) ((total * 100) / lenghtOfFile);
-	//				mProgress.setProgress(mProgressStatus);
-					//publishProgress("" + (int) ((total * 100) / lenghtOfFile));
+					// mProgressStatus=(int) ((total * 100) / lenghtOfFile);
+					// mProgress.setProgress(mProgressStatus);
+					// publishProgress("" + (int) ((total * 100) /
+					// lenghtOfFile));
 					output.write(data, 0, count);
 				}
 
@@ -140,10 +187,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		}
 
-
 		@Override
 		protected void onPostExecute(String unused) {
-	//		dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
+			// dismissDialog(DIALOG_DOWNLOAD_PROGRESS);
 		}
 	}
 

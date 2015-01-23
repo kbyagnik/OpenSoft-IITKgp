@@ -298,12 +298,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				String filename = tokens[tokens.length - 1];
 				System.out.println(url.toString().split("/"));
 
-				tokens = filename.split(".");
-				String ext = tokens[tokens.length - 1];
+		//		tokens = filename.split(".");
+			//	String ext = tokens[tokens.length - 1];
 				// create a new file, to save the downloaded file
 				// String filename=url.toString().split("/")[-1];
 				System.out.println(url.toString());
-				System.out.println("asd" + filename + "   " + ext);
+				System.out.println("asd" + filename);
 				File file = new File(SDCardRoot, filename);
 
 				InputStream input = new BufferedInputStream(url.openStream());
@@ -314,6 +314,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 																	// in SD
 																	// Card
 
+				System.out.println("asdsadsdsa");
 				int mProgressStatus;
 				byte data[] = new byte[1024];
 

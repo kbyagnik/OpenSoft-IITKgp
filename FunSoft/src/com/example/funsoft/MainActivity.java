@@ -24,9 +24,14 @@ import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v7.app.ActionBarActivity;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 //import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -178,8 +183,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				// String data = (String) adapter.getItemAtPosition(position);
 				// data = data.split("Link")[1];
 				String data = resultList.get(position).link;
+				String titledata=resultList.get(position).title;
 				System.out.println(data);
-				// startDownload(data);
+				startDownload(data,titledata);
 			}
 		});
 		// status = (TextView) findViewById(R.id.status);
@@ -272,13 +278,13 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		thread.start();
 	}
 
-	private void startDownload(String url) {
+	private void startDownload(String url,String title) {
 		// TODO Auto-generated method stub
 		// String url = "http://cse.iitrpr.ac.in/ckn/courses/s2015/q1.pdf"; //
 		// your
 		// download
 		// url
-		new DownloadFileAsync().execute(url);
+		new DownloadFileAsync().execute(url,title);
 	}
 
 	class DownloadFileAsync extends AsyncTask<String, String, String> {
@@ -292,7 +298,24 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		@Override
 		protected String doInBackground(String... aurl) {
 			int count;
+			System.out.println(aurl);
+			System.out.println("LOL");
+			Intent intent = new Intent();
+			PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, Intent.FLAG_ACTIVITY_NEW_TASK);
 
+			final NotificationManager mNotifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		//	 NotificationCompat.Builder builder = new
+		//	 NotificationCompat.Builder(getApplicationContext());
+			final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				getApplicationContext());
+			mBuilder.setContentTitle("Downloading "+aurl[1])
+					.setContentText("Download in progress")
+					.setSmallIcon(R.drawable.video)
+					.setTicker("Downloading "+aurl[1])
+					.setProgress(100, 10, false)
+				//	.setWhen(System.currentTimeMillis())
+					.setContentIntent(pendingIntent);
+	//		.setProgressBar(100, 100, false);
 			try {
 
 				URL url = new URL(aurl[0]);
@@ -301,23 +324,36 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 				int lenghtOfFile = conexion.getContentLength();
 				Log.d("ANDRO_ASYNC", "Lenght of file: " + lenghtOfFile);
-
+				System.out.println("LOL");
 				File SDCardRoot = Environment.getExternalStorageDirectory();
+				System.out.println("LOL");
 				// create a new file, to save the downloaded file
-				File file = new File(SDCardRoot, "downloaded_file.pdf");
-
+				File file = new File(SDCardRoot, "downloaded_file123.pdf");
+				System.out.println("LOL"+file);
+				mNotifyManager.notify(0, mBuilder.build());
 				InputStream input = new BufferedInputStream(url.openStream());
+				System.out.println("LOLb"+file.canWrite()+file.isFile());
+				mBuilder.setProgress(100, 17, false);
+				mNotifyManager.notify(0, mBuilder.build());
+				System.out.println("LOLb"+file.canWrite()+file.isFile());
+				mNotifyManager.notify(0, mBuilder.build());
 				OutputStream output = new FileOutputStream(file); // save file
 																	// in SD
 																	// Card
+				System.out.println("LOLa");
+		//		mBuilder.setProgress(100, 17, false);
+				System.out.println("LOL");
 				int mProgressStatus;
 				byte data[] = new byte[1024];
 
 				long total = 0;
-
+				
+				mNotifyManager.notify(0, mBuilder.build());
+//				mNotifyManager.notify();
 				while ((count = input.read(data)) != -1) {
 					total += count;
 					mProgressStatus = (int) ((total * 100) / lenghtOfFile);
+					mBuilder.setProgress(100, mProgressStatus, false);
 					// mProgress.setProgress(mProgressStatus);
 					System.out
 							.println("Downloading..." + mProgressStatus + "%");

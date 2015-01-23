@@ -25,33 +25,124 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.support.v7.app.ActionBarActivity;
+import android.content.Context;
 //import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements OnClickListener {
 
+	private static class myData {
+		String title, desription, size, category, link;
+
+		myData(String t, String d, String s, String c, String l) {
+			title = t;
+			desription = d;
+			size = s;
+			category = c;
+			link = l;
+		}
+	}
+
+	private static class EfficientAdapter extends BaseAdapter {
+		private LayoutInflater mInflater;
+
+		public EfficientAdapter(Context context) {
+			System.out.println("rsexchj,bghfgx");
+			mInflater = LayoutInflater.from(context);
+		}
+
+		public View getView(int position, View convertView, ViewGroup parent) {
+
+			System.out.println("hf23456789hgfv");
+			ViewHolder holder;
+			if (convertView == null) {
+				convertView = mInflater.inflate(R.layout.list_item, null);
+				holder = new ViewHolder();
+				holder.title = (TextView) convertView.findViewById(R.id.title);
+				holder.description = (TextView) convertView
+						.findViewById(R.id.description);
+				holder.size = (TextView) convertView.findViewById(R.id.size);
+				holder.category = (ImageView) convertView
+						.findViewById(R.id.category);
+
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+
+			System.out.println("hfhgfv");
+			holder.title.setText(resultList.get(position).title);
+			holder.description.setText(resultList.get(position).desription);
+			// holder.category.setText(resultList.get(position).category);
+			holder.size.setText(resultList.get(position).size);
+			// holder.title.setText(resultList.title);
+
+			// holder.text2.setText(country[position]);
+
+			return convertView;
+		}
+
+		static class ViewHolder {
+			TextView title;
+			TextView description;
+			ImageView category;
+			TextView size;
+
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return resultList.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return position;
+		}
+
+		@Override
+		public void notifyDataSetChanged() {
+			System.out.println("Called");
+			super.notifyDataSetChanged();
+			// _NotifyOnChange = true;
+		}
+
+	}
+
 	Button download;
 	// TextView status;
 	EditText search;
 	ListView results;
-	ArrayList<String> resultList = new ArrayList<String>();
-	ArrayAdapter<String> resultAdapter;
+	static ArrayList<myData> resultList = new ArrayList<myData>();
+	// ArrayAdapter<String> resultAdapter;
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
@@ -71,19 +162,22 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		download = (Button) findViewById(R.id.download_btn);
 		search = (EditText) findViewById(R.id.searchBox);
 		results = (ListView) findViewById(R.id.listView_results);
-		resultAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, resultList);
-		results.setAdapter(resultAdapter);
+		// resultAdapter = new ArrayAdapter<String>(this,
+		// android.R.layout.simple_list_item_1, resultList);
+		results.setAdapter(new EfficientAdapter(this));
 		results.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> adapter, View arg1,
 					int position, long arg3) {
 				// TODO Auto-generated method stub
-				String data = (String) adapter.getItemAtPosition(position);
-				data = data.split("Link")[1];
+				// System.out.println(position);
+				// System.out.println(resultList.get(position).link);
+				// String data = (String) adapter.getItemAtPosition(position);
+				// data = data.split("Link")[1];
+				String data = resultList.get(position).link;
 				System.out.println(data);
-				startDownload(data);
+				// startDownload(data);
 			}
 		});
 		// status = (TextView) findViewById(R.id.status);
@@ -213,9 +307,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 				while ((count = input.read(data)) != -1) {
 					total += count;
-					mProgressStatus=(int) ((total * 100) / lenghtOfFile);
+					mProgressStatus = (int) ((total * 100) / lenghtOfFile);
 					// mProgress.setProgress(mProgressStatus);
-					System.out.println("Downloading..." + mProgressStatus + "%");
+					System.out
+							.println("Downloading..." + mProgressStatus + "%");
 					output.write(data, 0, count);
 				}
 				System.out.println("Downloaded");
@@ -237,15 +332,26 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	void displayResults(String response) {
 		resultList.clear();
 		try {
+			System.out.println("lol");
 			JSONArray j = new JSONArray(response);
 			for (int i = 0; i < j.length(); ++i) {
-				resultList.add("Title: "
-						+ j.getJSONObject(i).getString("title")
-						+ "\nDescription: "
-						+ j.getJSONObject(i).getString("description")
-						+ "\nLink" + j.getJSONObject(i).getString("link"));
+
+				// title.add(j.getJSONObject(i).getString("title"));
+				// String t=
+				resultList.add(new myData(
+						j.getJSONObject(i).getString("title"), j.getJSONObject(
+								i).getString("description"), j.getJSONObject(i)
+								.getString("size"), j.getJSONObject(i)
+								.getString("category"), j.getJSONObject(i)
+								.getString("link")));
+				// resultList.add("Title: "
+				// + j.getJSONObject(i).getString("title")
+				// + "\nDescription: "
+				// + j.getJSONObject(i).getString("description")
+				// + "\nLink" + j.getJSONObject(i).getString("link"));
 			}
-			resultAdapter.notifyDataSetChanged();
+			// results.;
+			results.setAdapter(new EfficientAdapter(this));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

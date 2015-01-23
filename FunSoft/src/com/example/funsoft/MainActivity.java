@@ -32,6 +32,7 @@ import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 //import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -98,7 +100,12 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			holder.title.setText(resultList.get(position).title);
 			holder.description.setText(resultList.get(position).desription);
 			holder.size.setText(resultList.get(position).size);
-
+			String cat = resultList.get(position).category;
+			if (cat.equals("content")) {
+				holder.category.setImageResource(R.drawable.content);
+			} else if (cat.equals("audio")) {
+				holder.category.setImageResource(R.drawable.audio);
+			}
 			return convertView;
 		}
 
@@ -273,8 +280,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					.setContentText("Download in progress")
 					.setSmallIcon(R.drawable.video)
 					.setTicker("Downloading " + aurl[1])
-					.setProgress(100, 0, false)
-					.setContentIntent(pendingIntent);
+					.setProgress(100, 0, false).setContentIntent(pendingIntent);
 			try {
 
 				URL url = new URL(aurl[0]);
@@ -282,11 +288,23 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				conexion.connect();
 
 				int lenghtOfFile = conexion.getContentLength();
-
+				System.out.println(lenghtOfFile);
 				File SDCardRoot = Environment.getExternalStorageDirectory();
 
+				System.out.println(lenghtOfFile);
+
+				System.out.println(url.toString());
+				String[] tokens = url.toString().split("/");
+				String filename = tokens[tokens.length - 1];
+				System.out.println(url.toString().split("/"));
+
+				tokens = filename.split(".");
+				String ext = tokens[tokens.length - 1];
 				// create a new file, to save the downloaded file
-				File file = new File(SDCardRoot, "downloaded_file123.pdf");
+				// String filename=url.toString().split("/")[-1];
+				System.out.println(url.toString());
+				System.out.println("asd" + filename + "   " + ext);
+				File file = new File(SDCardRoot, filename);
 
 				InputStream input = new BufferedInputStream(url.openStream());
 
@@ -312,6 +330,19 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					output.write(data, 0, count);
 				}
 				System.out.println("Downloaded");
+
+				// intent = new Intent();
+				// intent.setAction(android.content.Intent.ACTION_VIEW);
+				// File file = new File("/sdcard/download/path/test.mp3");
+				// MimeTypeMap mime = MimeTypeMap.getSingleton();
+				// intent.setDataAndType(Uri.fromFile(file),mime.getMimeTypeFromExtension(ext));
+
+				mBuilder.setContentTitle("Downloaded " + aurl[1])
+						.setContentText("Download Complete")
+						.setTicker("Download Complete")
+						// .setContentIntent(intent);
+						.setContentIntent(pendingIntent);
+				mNotifyManager.notify(0, mBuilder.build());
 				output.flush();
 				output.close();
 				input.close();

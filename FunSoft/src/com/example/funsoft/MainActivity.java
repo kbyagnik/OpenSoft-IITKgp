@@ -25,6 +25,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.support.v7.app.ActionBarActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 //import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -48,6 +49,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity implements OnClickListener {
 
@@ -210,7 +212,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		int id = v.getId();
 		switch (id) {
 		case R.id.download_btn:
-			searchData(search.getText().toString());
+			searchData(v, search.getText().toString());
 			// status.setText("Button Clicked!");
 			// mProgress.setProgress(50);
 			// startDownload();
@@ -218,10 +220,14 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		}
 	}
 
-	private void searchData(final String search) {
+	private void searchData(View v, final String search) {
 
 		// TODO Auto-generated method stub
 		System.out.println("asdsa78d");
+		new ProgressDialog(v.getContext());
+		final ProgressDialog p = ProgressDialog.show(v.getContext(),
+				"Waiting for Server", "Accessing Server");
+
 		Thread thread = new Thread() {
 
 			@Override
@@ -248,12 +254,16 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					System.out.println(response);
 					runOnUiThread(new Runnable() {
 						public void run() {
+							p.dismiss();
+							// Toast.makeText(getApplicationContext(),"Success",
+							// Toast.LENGTH_SHORT).show();
 							displayResults(response);
 						}
 					});
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
+					p.dismiss();
 					e.printStackTrace();
 				}
 			}

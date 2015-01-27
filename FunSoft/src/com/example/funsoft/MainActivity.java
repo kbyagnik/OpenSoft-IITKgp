@@ -259,7 +259,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		thread.start();
 	}
 
-	private void learnData(View v, final String link) {
+	private void learnData(final String link) {
 
 		// TODO Auto-generated method stub
 		Thread thread = new Thread() {
@@ -274,7 +274,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					nameValuePairs = new ArrayList<NameValuePair>();
 					nameValuePairs.add(new BasicNameValuePair("command",
 							"download"));
-					nameValuePairs.add(new BasicNameValuePair("link", link));
+					nameValuePairs.add(new BasicNameValuePair("query", link));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					response = httpclient.execute(httppost);
 
@@ -448,7 +448,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 									int which) {
 								// TODO Auto-generated method stub
 								System.out.println("link "+data.link);
-								startDownload(data.title, data.link);
+								learnData(data.link);
+								startDownload(data.link,data.title);
 								
 							}
 						})

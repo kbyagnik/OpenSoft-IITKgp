@@ -440,7 +440,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		description.setText(data.desription);
 		size.setText(data.size);
 
-		filePopup
+		filePopup.setTitle("File Info")
 				.setView(v)
 				.setPositiveButton("Download",
 						new DialogInterface.OnClickListener() {
@@ -481,7 +481,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		rate = (RatingBar) v.findViewById(R.id.rating_bar);
 
-		ratingPopup
+		ratingPopup.setTitle("Rate This File")
 				.setView(v)
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 

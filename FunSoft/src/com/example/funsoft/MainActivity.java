@@ -150,7 +150,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
-	String query = "http://10.20.87.91/check.php";
+	String query = "http://10.20.254.248/opensoft/server.php";
+	String learn = "http://10.20.254.248/opensoft/download.php";
+	
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
 
@@ -235,6 +237,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							p.dismiss();
+							System.out.println(response);
 							displayResults(response);
 						}
 					});
@@ -250,6 +253,36 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		thread.start();
 	}
 
+	private void learnData(View v, final String link) {
+
+		// TODO Auto-generated method stub
+		Thread thread = new Thread() {
+
+			@Override
+			public void run() {
+				try {
+
+					HttpClient httpclient = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(learn);
+
+					nameValuePairs = new ArrayList<NameValuePair>();
+					nameValuePairs.add(new BasicNameValuePair("command",
+							"download"));
+					nameValuePairs.add(new BasicNameValuePair("link", link));
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					response = httpclient.execute(httppost);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		};
+		thread.start();
+	}
+
+	
 	private void startDownload(String url, String title) {
 		// TODO Auto-generated method stub
 		// your

@@ -69,6 +69,17 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		String title, desription, size, category, link;
 
 		myData(String t, String d, String s, String c, String l) {
+			
+			int tempSize=Integer.parseInt(s)/1024;
+			if (tempSize<1024)
+			{
+				s=Integer.toString(tempSize)+" KB";
+			}
+			else
+			{
+				tempSize/=1024;
+				s=Integer.toString(tempSize)+" MB";
+			}
 			title = t;
 			desription = d;
 			size = s;

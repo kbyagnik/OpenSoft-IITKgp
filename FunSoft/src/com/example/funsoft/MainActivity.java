@@ -59,6 +59,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -156,7 +157,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	String query = "http://10.20.254.248/opensoft/server.php";
 	String learn = "http://10.20.254.248/opensoft/download.php";
-	
+
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
 
@@ -177,7 +178,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				String data = resultList.get(position).link;
 				String titledata = resultList.get(position).title;
 				displayPopup(resultList.get(position));
-				//startDownload(data, titledata);
+				// startDownload(data, titledata);
 			}
 
 		});
@@ -288,7 +289,6 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		thread.start();
 	}
 
-	
 	private void startDownload(String url, String title) {
 		// TODO Auto-generated method stub
 		// your
@@ -447,9 +447,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								// TODO Auto-generated method stub
-								System.out.println("link "+data.link);
+								System.out.println("link " + data.link);
 								startDownload(data.title, data.link);
-								
+								getRating(data);
 							}
 						})
 				.setNegativeButton("Cancel",
@@ -465,6 +465,35 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		AlertDialog alertDialog = filePopup.create();
 		alertDialog.show();
+	}
+
+	public void getRating(final myData data) {
+		AlertDialog.Builder ratingPopup = new AlertDialog.Builder(this);
+
+		final View v = getLayoutInflater().inflate(R.layout.rating, null);
+		
+		final RatingBar rate;
+		
+		rate = (RatingBar) v.findViewById(R.id.rating_bar);
+		
+		ratingPopup.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				setRating(data.link,rate.getRating());
+			}
+		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+			}
+		});
+	}
+	
+	public void setRating(String link,float rating){
+		
 	}
 
 }

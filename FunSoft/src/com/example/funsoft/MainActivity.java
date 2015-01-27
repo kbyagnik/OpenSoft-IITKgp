@@ -166,8 +166,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
-	String query = "http://10.20.254.248/opensoft/server.php";
-	String learn = "http://10.20.254.248/opensoft/download.php";
+	String server = "http://10.20.254.248/opensoft/";
+	String query = server + "server.php";
+	String learn = server + "download.php";
+	String rating = server + "rating.php";
 
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
@@ -449,7 +451,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		description.setText(data.desription);
 		size.setText(data.size);
 
-		filePopup
+		filePopup.setTitle("File Info")
 				.setView(v)
 				.setPositiveButton("Download",
 						new DialogInterface.OnClickListener() {
@@ -458,6 +460,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								// TODO Auto-generated method stub
+
+								System.out.println("link " + data.link);
+
 								startDownload(data.link,data.title);
 								learnData(data.link);
 								getRating(data);
@@ -487,7 +492,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		rate = (RatingBar) v.findViewById(R.id.rating_bar);
 
-		ratingPopup
+		ratingPopup.setTitle("Rate This File")
 				.setView(v)
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -495,6 +500,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					public void onClick(DialogInterface dialog, int which) {
 						// TODO Auto-generated method stub
 						setRating(data.link, rate.getRating());
+						System.out.println("Rating set");
 					}
 				})
 				.setNegativeButton("Cancel",
@@ -505,10 +511,13 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 									int which) {
 								// TODO Auto-generated method stub
 							}
-						});
+						}
+				);
+		AlertDialog alertDialog = ratingPopup.create();
+		ratingPopup.show();
 	}
 
-	public void setRating(final String link, final Float rating) {
+	public void setRating(final String link, final Float ratingV) {
 
 		// TODO Auto-generated method stub
 		Thread thread = new Thread() {
@@ -518,16 +527,17 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				try {
 
 					HttpClient httpclient = new DefaultHttpClient();
-					HttpPost httppost = new HttpPost(learn);
+					HttpPost httppost = new HttpPost(rating);
 
 					nameValuePairs = new ArrayList<NameValuePair>();
 					nameValuePairs.add(new BasicNameValuePair("command",
 							"rating"));
-					nameValuePairs.add(new BasicNameValuePair("link", link));
-					nameValuePairs.add(new BasicNameValuePair("rating", rating
+					nameValuePairs.add(new BasicNameValuePair("query", link));
+					nameValuePairs.add(new BasicNameValuePair("rating", ratingV
 							.toString()));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					response = httpclient.execute(httppost);
+					System.out.println("Setting the rating..." + ratingV.toString());
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

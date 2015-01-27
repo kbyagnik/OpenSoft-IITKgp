@@ -9,9 +9,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -27,10 +29,12 @@ import org.apache.http.message.BasicNameValuePair;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v7.app.ActionBarActivity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 //import android.app.ProgressDialog;
@@ -150,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
-	String query = "http://10.20.87.91/check.php";
+	String query = "http://10.20.254.248/opensoft/server.php";
 	List<NameValuePair> nameValuePairs;
 	HttpResponse response;
 
@@ -170,8 +174,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				// TODO Auto-generated method stub
 				String data = resultList.get(position).link;
 				String titledata = resultList.get(position).title;
-				startDownload(data, titledata);
+				displayPopup(resultList.get(position));
+				//startDownload(data, titledata);
 			}
+
 		});
 		download.setOnClickListener(this);
 	}
@@ -267,6 +273,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		@Override
 		protected String doInBackground(String... aurl) {
+			System.out.println("Download started...");
 			int count;
 			Intent intent = new Intent();
 			PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -286,7 +293,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				URL url = new URL(aurl[0]);
 				URLConnection conexion = url.openConnection();
 				conexion.connect();
-
+				System.out.println("Url connected...");
 				int lenghtOfFile = conexion.getContentLength();
 				System.out.println(lenghtOfFile);
 				File SDCardRoot = Environment.getExternalStorageDirectory();
@@ -298,8 +305,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				String filename = tokens[tokens.length - 1];
 				System.out.println(url.toString().split("/"));
 
-		//		tokens = filename.split(".");
-			//	String ext = tokens[tokens.length - 1];
+				// tokens = filename.split(".");
+				// String ext = tokens[tokens.length - 1];
 				// create a new file, to save the downloaded file
 				// String filename=url.toString().split("/")[-1];
 				System.out.println(url.toString());
@@ -348,6 +355,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				output.close();
 				input.close();
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			return null;
 
@@ -380,4 +388,50 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			e.printStackTrace();
 		}
 	}
+
+	public void displayPopup(final myData data) {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder filePopup = new AlertDialog.Builder(this);
+
+		final View v = getLayoutInflater().inflate(R.layout.popup, null);
+
+		TextView title, description, size;
+
+		title = (TextView) v.findViewById(R.id.title);
+		description = (TextView) v.findViewById(R.id.description);
+		size = (TextView) v.findViewById(R.id.size);
+
+		title.setText(data.title);
+		description.setText(data.desription);
+		size.setText(data.size);
+
+		filePopup
+				.setView(v)
+				.setPositiveButton("Download",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// TODO Auto-generated method stub
+								System.out.println("link "+data.link);
+								startDownload(data.title, data.link);
+								
+							}
+						})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// TODO Auto-generated method stub
+
+							}
+						});
+
+		AlertDialog alertDialog = filePopup.create();
+		alertDialog.show();
+	}
+
 }

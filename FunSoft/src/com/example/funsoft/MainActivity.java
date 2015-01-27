@@ -471,29 +471,61 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		AlertDialog.Builder ratingPopup = new AlertDialog.Builder(this);
 
 		final View v = getLayoutInflater().inflate(R.layout.rating, null);
-		
+
 		final RatingBar rate;
-		
+
 		rate = (RatingBar) v.findViewById(R.id.rating_bar);
-		
-		ratingPopup.setView(v).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				setRating(data.link,rate.getRating());
-			}
-		}).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-			}
-		});
+
+		ratingPopup
+				.setView(v)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						setRating(data.link, rate.getRating());
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// TODO Auto-generated method stub
+							}
+						});
 	}
-	
-	public void setRating(String link,float rating){
-		
+
+	public void setRating(final String link, final Float rating) {
+
+		// TODO Auto-generated method stub
+		Thread thread = new Thread() {
+
+			@Override
+			public void run() {
+				try {
+
+					HttpClient httpclient = new DefaultHttpClient();
+					HttpPost httppost = new HttpPost(learn);
+
+					nameValuePairs = new ArrayList<NameValuePair>();
+					nameValuePairs.add(new BasicNameValuePair("command",
+							"rating"));
+					nameValuePairs.add(new BasicNameValuePair("link", link));
+					nameValuePairs.add(new BasicNameValuePair("rating", rating
+							.toString()));
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+					response = httpclient.execute(httppost);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+		};
+		thread.start();
 	}
 
 }

@@ -4,5 +4,8 @@
     <string name="app_name">FunSoft</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="search_hint">Enter search keywords</string>
+    <string name="search_btn">Search</string>
+    <string name="sort">Sort By:</string>
 
 </resources>

@@ -122,7 +122,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 			holder.title.setText(resultList.get(position).title);
 
-			int templen = 50;
+			int templen = 20;
 			if (resultList.get(position).desription.length() < templen)
 				templen = resultList.get(position).desription.length();
 
@@ -187,8 +187,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
 	String server = "http://10.20.254.248/opensoft/";
-	String query = "http://10.20.87.91/check.php";
-	// String query = server + "server.php";
+	String query = server + "server.php";
 	String learn = server + "download.php";
 	String rating = server + "rating.php";
 

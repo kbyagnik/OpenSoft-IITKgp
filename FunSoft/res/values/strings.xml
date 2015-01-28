@@ -12,6 +12,7 @@
         <item>Sort By</item>
         <item>Downloads</item>
         <item>Rating</item>
+        <item>Size</item>
     </string-array>
 
 </resources>

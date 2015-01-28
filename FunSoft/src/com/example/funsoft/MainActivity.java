@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private static class myData {
 		String title, desription, size, category, link, rating, downloads;
-		int downloadCount;
+		int downloadCount,sizeB;
 		float ratingNum;
 
 		myData(String t, String d, String s, String c, String l, String r,
@@ -94,6 +94,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			link = l;
 			rating = "Ratings : " + r;
 			downloads = "Downloads : " + dd;
+			sizeB = Integer.parseInt(size.split(" ")[0]);
 			downloadCount = Integer.parseInt(dd);
 			ratingNum = Float.parseFloat(r);
 		}
@@ -192,6 +193,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	ListView results;
 	Spinner sortby;
 	static ArrayList<myData> resultList = new ArrayList<myData>();
+	public final Context c = this;
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
@@ -234,15 +236,15 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				if (position == 1) {
-
+				switch (position) {
+				case 1:
 					Collections.sort(resultList, new Comparator<myData>() {
 
 						@Override
 						public int compare(myData lhs, myData rhs) {
 							// TODO Auto-generated method stub
-							int dnleft = Integer.parseInt(lhs.downloads.split(" : ")[1]);
-							int dnright = Integer.parseInt(rhs.downloads.split(" : ")[1]);
+							int dnleft = lhs.downloadCount;
+							int dnright = rhs.downloadCount;
 							if (dnleft > dnright) {
 								return -1;
 							} else {
@@ -251,14 +253,15 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 						}
 					});
-				} else if (position == 2) {
+					break;
+				case 2:
 					Collections.sort(resultList, new Comparator<myData>() {
 
 						@Override
 						public int compare(myData lhs, myData rhs) {
 							// TODO Auto-generated method stub
-							float dnleft = Float.parseFloat(lhs.rating.split(" : ")[1]);
-							float dnright = Float.parseFloat(rhs.downloads.split(" : ")[1]);
+							float dnleft = lhs.ratingNum;
+							float dnright = rhs.ratingNum;
 							if (dnleft > dnright) {
 								return -1;
 							} else {
@@ -267,8 +270,27 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 						}
 					});
+					break;
+				case 3:
+					Collections.sort(resultList, new Comparator<myData>() {
+
+						@Override
+						public int compare(myData lhs, myData rhs) {
+							// TODO Auto-generated method stub
+							int dnleft = lhs.sizeB;
+							int dnright = rhs.sizeB;
+							if (dnleft > dnright) {
+								return -1;
+							} else {
+								return 0;
+							}
+
+						}
+					});
+					break;
 				}
-				results.setAdapter(new EfficientAdapter(getApplicationContext()));
+				
+				results.setAdapter(new EfficientAdapter(c));
 			}
 
 			@Override

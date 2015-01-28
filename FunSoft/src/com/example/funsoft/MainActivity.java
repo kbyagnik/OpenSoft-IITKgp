@@ -73,6 +73,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private static class myData {
 		String title, desription, size, category, link, rating, downloads;
+		int downloadCount;
+		float ratingNum;
 
 		myData(String t, String d, String s, String c, String l, String r,
 				String dd) {
@@ -92,6 +94,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			link = l;
 			rating = "Ratings : " + r;
 			downloads = "Downloads : " + dd;
+			downloadCount = Integer.parseInt(dd);
+			ratingNum = Float.parseFloat(r);
 		}
 	}
 
@@ -222,7 +226,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		});
 		download.setOnClickListener(this);
-		
+
 		sortby = (Spinner) findViewById(R.id.sort_spinner);
 		sortby.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -230,25 +234,47 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				if(position==1){
-					
-					Collections.sort(resultList,new Comparator<myData>() {
+				if (position == 1) {
+
+					Collections.sort(resultList, new Comparator<myData>() {
 
 						@Override
 						public int compare(myData lhs, myData rhs) {
 							// TODO Auto-generated method stub
-							return 0;
+							int dnleft = Integer.parseInt(lhs.downloads.split(" : ")[1]);
+							int dnright = Integer.parseInt(rhs.downloads.split(" : ")[1]);
+							if (dnleft > dnright) {
+								return -1;
+							} else {
+								return 0;
+							}
+
 						}
 					});
-				}else if(position==2){
-					
+				} else if (position == 2) {
+					Collections.sort(resultList, new Comparator<myData>() {
+
+						@Override
+						public int compare(myData lhs, myData rhs) {
+							// TODO Auto-generated method stub
+							float dnleft = Float.parseFloat(lhs.rating.split(" : ")[1]);
+							float dnright = Float.parseFloat(rhs.downloads.split(" : ")[1]);
+							if (dnleft > dnright) {
+								return -1;
+							} else {
+								return 0;
+							}
+
+						}
+					});
 				}
+				results.setAdapter(new EfficientAdapter(getApplicationContext()));
 			}
 
 			@Override
 			public void onNothingSelected(AdapterView<?> parent) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 	}
@@ -279,7 +305,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		switch (id) {
 		case R.id.download_btn:
 			searchData(v, search.getText().toString());
-		
+
 			break;
 		}
 	}

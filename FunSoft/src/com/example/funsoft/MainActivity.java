@@ -31,6 +31,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -44,6 +45,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.EventLogTags.Description;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,25 +72,26 @@ import android.widget.Toast;
 public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private static class myData {
-		String title, desription, size, category, link;
+		String title, desription, size, category, link, rating, downloads;
 
-		myData(String t, String d, String s, String c, String l) {
-			
-			int tempSize=Integer.parseInt(s)/1024;
-			if (tempSize<1024)
-			{
-				s=Integer.toString(tempSize)+" KB";
-			}
-			else
-			{
-				tempSize/=1024;
-				s=Integer.toString(tempSize)+" MB";
+		myData(String t, String d, String s, String c, String l, String r,
+				String dd) {
+
+			System.out.println(l + " " + r);
+			int tempSize = Integer.parseInt(s) / 1024;
+			if (tempSize < 1024) {
+				s = Integer.toString(tempSize) + " KB";
+			} else {
+				tempSize /= 1024;
+				s = Integer.toString(tempSize) + " MB";
 			}
 			title = t;
 			desription = d;
 			size = s;
 			category = c;
 			link = l;
+			rating = "Ratings : " + r;
+			downloads = "Downloads : " + dd;
 		}
 	}
 
@@ -111,6 +114,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				holder.size = (TextView) convertView.findViewById(R.id.size);
 				holder.category = (ImageView) convertView
 						.findViewById(R.id.category);
+				holder.rating = (TextView) convertView
+						.findViewById(R.id.rating);
+				holder.download = (TextView) convertView
+						.findViewById(R.id.download);
 
 				convertView.setTag(holder);
 			} else {
@@ -118,10 +125,21 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			}
 
 			holder.title.setText(resultList.get(position).title);
-			holder.description.setText(resultList.get(position).desription);
+
+			int templen = 50;
+			if (resultList.get(position).desription.length() < templen)
+				templen = resultList.get(position).desription.length();
+
+			String tempstr = resultList.get(position).desription.substring(0,
+					templen);
+
+			holder.description.setText(tempstr + " ...");
 			holder.size.setText(resultList.get(position).size);
+			holder.rating.setText(resultList.get(position).rating);
+			holder.download.setText(resultList.get(position).downloads);
+
 			String cat = resultList.get(position).category;
-			if (cat.equals("content")) {
+			if (cat.equals("text")) {
 				holder.category.setImageResource(R.drawable.content);
 			} else if (cat.equals("audio")) {
 				holder.category.setImageResource(R.drawable.audio);
@@ -134,6 +152,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			TextView description;
 			ImageView category;
 			TextView size;
+			TextView rating;
+			TextView download;
 
 		}
 
@@ -172,7 +192,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
 	String server = "http://10.20.254.248/opensoft/";
-	String query = server + "server.php";
+	String query = "http://10.20.87.91/check.php";
+	// String query = server + "server.php";
 	String learn = server + "download.php";
 	String rating = server + "rating.php";
 
@@ -324,6 +345,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					nameValuePairs.add(new BasicNameValuePair("command",
 							"download"));
 					nameValuePairs.add(new BasicNameValuePair("query", link));
+					TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+					String uuid = tManager.getDeviceId();
+					System.out.println("UUID is :" + uuid);
+					nameValuePairs.add(new BasicNameValuePair("uuid", uuid));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					response = httpclient.execute(httppost);
 
@@ -460,7 +485,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 								i).getString("description"), j.getJSONObject(i)
 								.getString("size"), j.getJSONObject(i)
 								.getString("category"), j.getJSONObject(i)
-								.getString("link")));
+								.getString("link"), j.getJSONObject(i)
+								.getString("rating"), j.getJSONObject(i)
+								.getString("downloads")));
 			}
 			// results.;
 			results.setAdapter(new EfficientAdapter(this));
@@ -486,7 +513,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		description.setText(data.desription);
 		size.setText(data.size);
 
-		filePopup.setTitle("File Info")
+		filePopup
+				.setTitle("File Info")
 				.setView(v)
 				.setPositiveButton("Download",
 						new DialogInterface.OnClickListener() {
@@ -498,7 +526,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 								System.out.println("link " + data.link);
 
-								startDownload(data.link,data.title);
+								startDownload(data.link, data.title);
 								learnData(data.link);
 								getRating(data);
 							}
@@ -527,7 +555,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		rate = (RatingBar) v.findViewById(R.id.rating_bar);
 
-		ratingPopup.setTitle("Rate This File")
+		ratingPopup
+				.setTitle("Rate This File")
 				.setView(v)
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -546,8 +575,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 									int which) {
 								// TODO Auto-generated method stub
 							}
-						}
-				);
+						});
 		AlertDialog alertDialog = ratingPopup.create();
 		ratingPopup.show();
 	}
@@ -572,7 +600,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 							.toString()));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					response = httpclient.execute(httppost);
-					System.out.println("Setting the rating..." + ratingV.toString());
+					System.out.println("Setting the rating..."
+							+ ratingV.toString());
 
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

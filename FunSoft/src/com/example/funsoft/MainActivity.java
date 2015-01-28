@@ -9,6 +9,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +56,7 @@ import android.view.View.OnClickListener;
 import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -62,6 +65,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +73,8 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private static class myData {
 		String title, desription, size, category, link, rating, downloads;
+		int downloadCount,sizeB;
+		float ratingNum;
 
 		myData(String t, String d, String s, String c, String l, String r,
 				String dd) {
@@ -88,6 +94,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			link = l;
 			rating = "Ratings : " + r;
 			downloads = "Downloads : " + dd;
+			sizeB = Integer.parseInt(size.split(" ")[0]);
+			downloadCount = Integer.parseInt(dd);
+			ratingNum = Float.parseFloat(r);
 		}
 	}
 
@@ -182,7 +191,9 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 	Button download;
 	EditText search;
 	ListView results;
+	Spinner sortby;
 	static ArrayList<myData> resultList = new ArrayList<myData>();
+	public final Context c = this;
 
 	public static final int DIALOG_DOWNLOAD_PROGRESS = 0;
 
@@ -216,6 +227,77 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 		});
 		download.setOnClickListener(this);
+
+		sortby = (Spinner) findViewById(R.id.sort_spinner);
+		sortby.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				switch (position) {
+				case 1:
+					Collections.sort(resultList, new Comparator<myData>() {
+
+						@Override
+						public int compare(myData lhs, myData rhs) {
+							// TODO Auto-generated method stub
+							int dnleft = lhs.downloadCount;
+							int dnright = rhs.downloadCount;
+							if (dnleft > dnright) {
+								return -1;
+							} else {
+								return 0;
+							}
+
+						}
+					});
+					break;
+				case 2:
+					Collections.sort(resultList, new Comparator<myData>() {
+
+						@Override
+						public int compare(myData lhs, myData rhs) {
+							// TODO Auto-generated method stub
+							float dnleft = lhs.ratingNum;
+							float dnright = rhs.ratingNum;
+							if (dnleft > dnright) {
+								return -1;
+							} else {
+								return 0;
+							}
+
+						}
+					});
+					break;
+				case 3:
+					Collections.sort(resultList, new Comparator<myData>() {
+
+						@Override
+						public int compare(myData lhs, myData rhs) {
+							// TODO Auto-generated method stub
+							int dnleft = lhs.sizeB;
+							int dnright = rhs.sizeB;
+							if (dnleft > dnright) {
+								return -1;
+							} else {
+								return 0;
+							}
+
+						}
+					});
+					break;
+				}
+				
+				results.setAdapter(new EfficientAdapter(c));
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				// TODO Auto-generated method stub
+
+			}
+		});
 	}
 
 	@Override
@@ -244,6 +326,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		switch (id) {
 		case R.id.download_btn:
 			searchData(v, search.getText().toString());
+
 			break;
 		}
 	}

@@ -29,6 +29,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.TelephonyManager;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -121,14 +122,14 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 			holder.title.setText(resultList.get(position).title);
 
-			int templen = 20;
-			if (resultList.get(position).desription.length() < 20)
+			int templen = 50;
+			if (resultList.get(position).desription.length() < templen)
 				templen = resultList.get(position).desription.length();
 
 			String tempstr = resultList.get(position).desription.substring(0,
 					templen);
 
-			holder.description.setText(tempstr);
+			holder.description.setText(tempstr + " ...");
 			holder.size.setText(resultList.get(position).size);
 			holder.rating.setText(resultList.get(position).rating);
 			holder.download.setText(resultList.get(position).downloads);
@@ -187,7 +188,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	String server = "http://10.20.254.248/opensoft/";
 	String query = "http://10.20.87.91/check.php";
-//	String query = server + "server.php";
+	// String query = server + "server.php";
 	String learn = server + "download.php";
 	String rating = server + "rating.php";
 
@@ -309,6 +310,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					nameValuePairs.add(new BasicNameValuePair("command",
 							"download"));
 					nameValuePairs.add(new BasicNameValuePair("query", link));
+					TelephonyManager tManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+					String uuid = tManager.getDeviceId();
+					System.out.println("UUID is :" + uuid);
+					nameValuePairs.add(new BasicNameValuePair("uuid", uuid));
 					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 					response = httpclient.execute(httppost);
 

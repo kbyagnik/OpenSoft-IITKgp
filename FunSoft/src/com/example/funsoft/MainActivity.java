@@ -148,7 +148,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				holder.category.setImageResource(R.drawable.content);
 			} else if (cat.equals("audio")) {
 				holder.category.setImageResource(R.drawable.audio);
+			}else if (cat.equals("video")) {
+				holder.category.setImageResource(R.drawable.video);
 			}
+
 			return convertView;
 		}
 

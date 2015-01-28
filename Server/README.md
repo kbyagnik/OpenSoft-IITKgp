@@ -1,0 +1,1 @@
+Copy the opensoft folder in the www folder of wamp installation folder.

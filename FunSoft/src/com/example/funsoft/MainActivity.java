@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 
 	private static class myData {
 		String title, desription, size, category, link, rating, downloads;
-		int downloadCount,sizeB;
+		int downloadCount, sizeB;
 		float ratingNum;
 
 		myData(String t, String d, String s, String c, String l, String r,
@@ -82,19 +82,19 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			System.out.println(l + " " + r);
 			int tempSize = Integer.parseInt(s) / 1024;
 			if (tempSize < 1024) {
-				s = Integer.toString(tempSize) + " KB";
+				size = Integer.toString(tempSize) + " KB";
 			} else {
 				tempSize /= 1024;
-				s = Integer.toString(tempSize) + " MB";
+				size = Integer.toString(tempSize) + " MB";
 			}
 			title = t;
 			desription = d;
-			size = s;
+			// size = s;
 			category = c;
 			link = l;
 			rating = "Ratings : " + r;
 			downloads = "Downloads : " + dd;
-			sizeB = Integer.parseInt(size.split(" ")[0]);
+			sizeB = Integer.parseInt(s);
 			downloadCount = Integer.parseInt(dd);
 			ratingNum = Float.parseFloat(r);
 		}
@@ -148,7 +148,10 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 				holder.category.setImageResource(R.drawable.content);
 			} else if (cat.equals("audio")) {
 				holder.category.setImageResource(R.drawable.audio);
+			} else if (cat.equals("video")) {
+				holder.category.setImageResource(R.drawable.video);
 			}
+
 			return convertView;
 		}
 
@@ -278,7 +281,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 							// TODO Auto-generated method stub
 							int dnleft = lhs.sizeB;
 							int dnright = rhs.sizeB;
-							if (dnleft > dnright) {
+							if (dnleft < dnright) {
 								return -1;
 							} else {
 								return 0;
@@ -288,7 +291,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					});
 					break;
 				}
-				
+
 				results.setAdapter(new EfficientAdapter(c));
 			}
 
@@ -438,7 +441,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 					getApplicationContext());
 			mBuilder.setContentTitle("Downloading " + aurl[1])
 					.setContentText("Download in progress")
-					.setSmallIcon(R.drawable.video)
+					.setSmallIcon(R.drawable.ic_launcher)
 					.setTicker("Downloading " + aurl[1])
 					.setProgress(100, 0, false).setContentIntent(pendingIntent);
 			try {

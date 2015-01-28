@@ -327,7 +327,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		switch (id) {
 		case R.id.download_btn:
 			searchData(v, search.getText().toString());
-
+			sortby.setSelection(0);
 			break;
 		}
 	}

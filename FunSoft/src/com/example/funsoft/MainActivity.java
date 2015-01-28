@@ -317,9 +317,50 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			openSettings();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void openSettings() {
+		// TODO Auto-generated method stub
+		AlertDialog.Builder settings = new AlertDialog.Builder(this);
+
+		final View v = getLayoutInflater().inflate(R.layout.settings, null);
+
+		TextView currAdd = (TextView) v.findViewById(R.id.currAddr);
+		currAdd.setText(server);
+
+		final EditText serverAddr = (EditText) v.findViewById(R.id.serverAddr);
+
+		settings.setTitle("Settings")
+				.setView(v)
+				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+
+						server = serverAddr.getText().toString();
+						query = server + "server.php";
+						learn = server + "download.php";
+						rating = server + "rating.php";
+					}
+				})
+				.setNegativeButton("Cancel",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// TODO Auto-generated method stub
+
+							}
+						});
+
+		AlertDialog settingDialog = settings.create();
+		settingDialog.show();
 	}
 
 	@Override

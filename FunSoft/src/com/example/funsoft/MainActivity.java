@@ -82,19 +82,19 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 			System.out.println(l + " " + r);
 			int tempSize = Integer.parseInt(s) / 1024;
 			if (tempSize < 1024) {
-				s = Integer.toString(tempSize) + " KB";
+				size = Integer.toString(tempSize) + " KB";
 			} else {
 				tempSize /= 1024;
-				s = Integer.toString(tempSize) + " MB";
+				size = Integer.toString(tempSize) + " MB";
 			}
 			title = t;
 			desription = d;
-			size = s;
+//			size = s;
 			category = c;
 			link = l;
 			rating = "Ratings : " + r;
 			downloads = "Downloads : " + dd;
-			sizeB = Integer.parseInt(size.split(" ")[0]);
+			sizeB = Integer.parseInt(s);
 			downloadCount = Integer.parseInt(dd);
 			ratingNum = Float.parseFloat(r);
 		}
@@ -281,7 +281,7 @@ public class MainActivity extends ActionBarActivity implements OnClickListener {
 							// TODO Auto-generated method stub
 							int dnleft = lhs.sizeB;
 							int dnright = rhs.sizeB;
-							if (dnleft > dnright) {
+							if (dnleft < dnright) {
 								return -1;
 							} else {
 								return 0;
